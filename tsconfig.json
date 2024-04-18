@@ -1,14 +1,11 @@
 {
     "compilerOptions": {
       // Targeted standard
-      "target": "es6",
-      "lib": [
-        "es2017",
-        "esnext.asynciterable"
-      ],
+      "target": "es2022",
+      "lib": ["es2023"],
       // Module system
-      "module": "commonjs",
-      "moduleResolution": "node",
+      "module": "node16",
+      "moduleResolution": "node16",
       "esModuleInterop": true,
       // Strictness
       "strict": true,
@@ -20,11 +17,6 @@
       "removeComments": false,
       "preserveConstEnums": true,
       "declaration": true,
-      "outDir": "lib",
-      "rootDir": "src"
     },
-    "include": [
-      "custom_typings/**/*.ts",
-      "src/**/*.ts"
-    ]
+    "include": ["**/*.ts"]
   }

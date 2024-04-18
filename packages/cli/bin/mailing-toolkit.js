@@ -5,7 +5,7 @@
 process.title = 'mailing-toolkit';
 
 var semver = require('semver');
-var version = require('../package.json').engines.node;
+var version = require('../../../package.json').engines.node;
 
 // Exit early if the user's node version is too low.
 if (!semver.satisfies(process.version, version)) {

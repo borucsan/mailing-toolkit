@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "root",
+			"path": "."
+		},
+		{
+			"name": "cli",
+			"path": "./packages/cli"
+		},
+		{
+			"name": "eslint-plugin",
+			"path": "./packages/eslint-plugin"
+		},
+		{
+			"name": "mailing-test",
+			"path": "./packages/mailing-test"
+		},
+	],
+	"settings": {}
+}
