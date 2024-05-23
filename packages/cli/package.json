@@ -17,15 +17,26 @@
     "build-ts": "tsc",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "watch-ts": "tsc -w",
-    "test:command": "mailing-toolkit"
+    "test:command": "mailing-toolkit",
+    "build-install": "npm run build-ts && npm install -g ."
   },
   "dependencies": {
+    "@html-eslint/parser": "^0.24.1",
+    "@mailing-toolkit/eslint-plugin": "^0.1.0",
+    "@web/dev-server": "^0.4.5",
+    "chokidar": "^3.6.0",
     "command-line-args": "^5.2.1",
     "command-line-commands": "^3.0.2",
     "command-line-usage": "^7.0.1",
-    "eslint": "^8.56.0",
+    "es-html-parser": "^0.0.9",
+    "eslint": "^8",
+    "glob": "^10.3.16",
+    "html-to-text": "^9.0.5",
     "jimp": "^0.22.10",
+    "keypress": "^0.2.1",
+    "maildev": "^2.1.0",
     "node-html-parser": "^6.1.12",
+    "nodemailer": "^6.9.13",
     "semver": "^7.5.4",
     "stdio": "^2.1.3"
   },

@@ -1,9 +1,12 @@
 
 import { findAttr } from "../utils";
-import { Rule } from "eslint";
+import parse from "inline-style-parser";
+import { RuleModule } from "../models";
 
 const MESSAGE_IDS = {
     NO_STYLE_VERTICAL_ALIGN: "noStyleVerticalAlign",
+    NO_ATTR_VALIGN: "noAttrValign",
+    ATTR_STYLE_DIFF: "attrStyleDiff",
   };
 
 export default {
@@ -18,6 +21,10 @@ export default {
         messages: {
             [MESSAGE_IDS.NO_STYLE_VERTICAL_ALIGN]:
               "If valign attribute is used, vertical-align style should be used as well.",
+            [MESSAGE_IDS.NO_ATTR_VALIGN]:
+                "If vertical-align style is used, valign attribute should be used as well.",
+            [MESSAGE_IDS.ATTR_STYLE_DIFF]:
+                "valign attribute value and vertical-align style value should be the same.",
           },
     },
     create(context) {
@@ -29,25 +36,42 @@ export default {
                 }
                 const valignAttr = findAttr(node, "valign");
                 const styleAttr = findAttr(node, "style");
-                if(valignAttr?.value && !styleAttr?.value?.value?.includes("vertical-align")){
+                const css = (styleAttr?.value?.value || "");
+                const parsedCSS = parse(css);
+                const cssProperty = parsedCSS.find((x) => x.property === "vertical-align")
+                const attrValue = valignAttr?.value?.value;
+                if(attrValue && !cssProperty?.value) {
                     context.report({
                         node: valignAttr,
                         messageId: MESSAGE_IDS.NO_STYLE_VERTICAL_ALIGN,
-                        fix(fixer) {
-                            const css = (styleAttr?.value?.value || "").split(";").filter(function(x){
-                                return (x !== (undefined || ''));
-                              });
-                            css.push("vertical-align:" + valignAttr?.value?.value + ";");                           
-                            const cssValue = css.join("; ");
+                        fix(fixer) {       
+                            const cssProps = parsedCSS
+                            .filter((x) => x.property !== "vertical-align")
+                            .map((x) => `${x.property}: ${x.value};`);
+                            cssProps.push(`vertical-align: ${attrValue};`);
+                            const cssValue = cssProps.join(" ");
+
                             if (styleAttr) {
                                 return fixer.replaceText(styleAttr, `style="${cssValue}"`);
                             }
                             return fixer.insertTextBefore(node.openEnd, ` style="${cssValue}"`);
                         },
                     })
-                    
+                } else if(!attrValue && cssProperty?.value) {
+                    context.report({
+                        node,
+                        messageId: MESSAGE_IDS.NO_ATTR_VALIGN,
+                        fix(fixer) {
+                            return fixer.insertTextAfter(node.openStart, ` valign="${cssProperty.value}"`);
+                        },
+                    })
+                } else if(attrValue && cssProperty?.value && attrValue !== cssProperty.value) {
+                    context.report({
+                        node: valignAttr,
+                        messageId: MESSAGE_IDS.ATTR_STYLE_DIFF,
+                    })
                 }
             }
         }
     }
-} satisfies Rule.RuleModule
+} satisfies RuleModule;

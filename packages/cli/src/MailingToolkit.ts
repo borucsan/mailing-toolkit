@@ -1,7 +1,11 @@
 import commandLineCommands from "command-line-commands"
 import commandLineArgs = require('command-line-args')
-import { Command } from "./types/command";
-import SpaceImage from "./commands/SpaceImage";
+import { Command } from "./commands/command";
+import SpaceImage from "./commands/spaceImage";
+import Serve from "./commands/serve";
+import Validate from "./commands/validate";
+import Send from "./commands/send";
+import MailDev from "./commands/maildev";
 
 export class MailingToolkit {
 
@@ -16,7 +20,6 @@ export class MailingToolkit {
         this.commands.set(command.name, command);
     
         command.aliases.forEach((alias) => {
-          console.debug('adding alias', alias);
           this.commands.set(alias, command);
         });
       }
@@ -45,6 +48,10 @@ export class MailingToolkit {
         const mt = new MailingToolkit(args);
 
         mt.addCommand(new SpaceImage());
+        mt.addCommand(new Serve());
+        mt.addCommand(new Validate());
+        mt.addCommand(new Send());
+        mt.addCommand(new MailDev());
 
         return mt;
     }

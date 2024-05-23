@@ -1,28 +1,62 @@
 import parser from "@html-eslint/parser";
-import html from '@html-eslint/eslint-plugin';
-import recommended from './configs/recommended';
-import * as rules from './rules';
+import html from "@html-eslint/eslint-plugin";
+import recommended from "./configs/recommended";
+import rules from "./rules";
+import { ESLint, Linter, Rule } from "eslint";
+import pkg from "../package.json";
 
-const p = {
-    // @ts-ignore
-    configs: {
-      rules : recommended,
+const plugin = {
+  meta: {
+    name: pkg.name,
+    version: pkg.version,
+  },
+  rules: rules as Record<string, Rule.RuleModule>,
+  configs: {
+    recommended: [],
+    "recommended-legacy": {
+      plugins: ["markdown"],
+      overrides: [
+        {
+          files: ["*.md"],
+          processor: "markdown/markdown",
+        },
+        {
+          files: ["**/*.md/**"],
+          parserOptions: {
+            ecmaFeatures: {
+              // Adding a "use strict" directive at the top of
+              // every code block is tedious and distracting, so
+              // opt into strict mode parsing without the
+              // directive.
+              impliedStrict: true,
+            },
+          },
+          rules: { ...recommended } as Linter.RulesRecord,
+        },
+      ],
     },
-    rules,
-  };
-  
-  Object.assign(p.configs, {
-    "flat/recommended": {
-      files: ["**/*.html"],
+  },
+};
+
+Object.assign(plugin.configs, {
+  recommended: [
+    {
       plugins: {
-        "@mailing-eslint": p,
+        "@mailing-eslint": plugin,
         "@html-eslint": html,
       },
+    },
+    {
+      files: ["**/*.html"],
+      ignores: ["!**/*.html"],
       languageOptions: {
         parser,
       },
-      rules: {...recommended},
+      rules: {
+        ...recommended,
+      },
     },
-  });
-  
-export const plugin = p;
+  ],
+});
+
+export default plugin satisfies ESLint.Plugin;

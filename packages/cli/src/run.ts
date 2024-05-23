@@ -3,7 +3,6 @@ import { MailingToolkit } from "./MailingToolkit";
 (async () => {
     const toolkit = MailingToolkit.init(process.argv.slice(2));
     try {
-        console.debug(toolkit);
       const result = await toolkit.run();
       if (result && result.constructor &&
           result.constructor.name === 'CommandResult') {

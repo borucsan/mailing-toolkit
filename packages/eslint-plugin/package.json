@@ -1,6 +1,6 @@
 {
   "name": "@mailing-toolkit/eslint-plugin",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Eslint plugin for E-mail templates",
   "keywords": [
     "eslint",
@@ -10,6 +10,11 @@
   "author": "Dawid Karwot",
   "main": "./lib/index.js",
   "exports": "./lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "package.json"
+  ],
   "scripts": {
     "lint": "npm-run-all \"lint:*\"",
     "lint:eslint-docs": "npm-run-all \"update:eslint-docs -- --check\"",
@@ -28,9 +33,9 @@
   },
   "devDependencies": {
     "@types/css": "^0.0.37",
-    "@types/eslint": "^8.56.6",
+    "@types/eslint": "^8.56",
     "@types/jest": "^29.5.12",
-    "eslint": "^8.19.0",
+    "eslint": "^8",
     "eslint-doc-generator": "^1.0.0",
     "eslint-plugin-eslint-plugin": "^5.0.0",
     "eslint-plugin-node": "^11.1.0",
