@@ -1,41 +1,51 @@
 import { CommandLineOptions, OptionDefinition } from "command-line-args";
-import { Command, CommandResult } from "./command";
+import { OptionDefinition as DescriptionOptionDefinition} from "command-line-usage";
+import { Command, CommandResult } from "./command.js";
 import { startDevServer } from '@web/dev-server';
-import KeyTrigger from "../triggers/key";
+import KeyTrigger from "../triggers/key.js";
+import { globSync } from "glob";
 
 
 export default class Serve implements Command {
-    name = 'serve';
-    aliases = [""];
+  name = 'serve';
+  aliases = [""];
 
-    description = 'Launch the server';
+  description = 'Launch the server';
 
-    args: OptionDefinition[] =  [
-    ]
+  args: (OptionDefinition & DescriptionOptionDefinition)[] = [
+    {
+      name: 'input',
+      description: 'The input files to process',
+      type: String,
+      alias: 'i',
+      defaultValue: ["**/*.{html,htm}"],
+    },
+  ];
 
-    async run({}: CommandLineOptions): Promise<void | CommandResult> {
-        console.debug('Serve');
-        const path = process.cwd();
-        let target = undefined;
+  async run({input}: CommandLineOptions): Promise<void | CommandResult> {
+    const files = globSync([...input]);
         
-        const server = await startDevServer({
-            config: {
-                rootDir: path,
-                watch: true,
-                open: true,
-            },
-            readCliArgs: false,
-            readFileConfig: false,
-        });
-        console.debug('Server started',  target);
+    const server = await startDevServer({
+      config: {
+        rootDir: process.cwd(),
+        watch: true,
+        open: files[0] ? files[0] : false,
+      },
+      readCliArgs: false,
+      readFileConfig: false,
+    });
 
-        const keyTrigger = new KeyTrigger();
-
-        keyTrigger.on('keypress', async (key) => {
-            if(key.ctrl && key.name === 'c') {
-                server.stop();
-                process.exit(0);
-            }
-        });
-    }
+    const keyTrigger = new KeyTrigger();
+    keyTrigger.addBinding({
+      name: "c",
+      description: "Close the server",
+      ctrl: true,
+      callback: async () => {
+        server.stop();
+        keyTrigger.close();
+        process.exit(0);
+      }
+    });
+    keyTrigger.listen();
+  }
 }

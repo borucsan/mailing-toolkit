@@ -1,24 +1,24 @@
 import chokidar from 'chokidar';
 
 class WatchTrigger {
-    private watcher: chokidar.FSWatcher;
-    static events = ["ready", "add", "change", "error"]
+  private watcher: chokidar.FSWatcher;
+  static events = ["ready", "add", "change", "error"];
 
-    constructor(paths: string | string[], options: chokidar.WatchOptions = {}) {
-        this.watcher = chokidar.watch(paths, options);
-    }
+  constructor(paths: string | string[], options: chokidar.WatchOptions = {}) {
+    this.watcher = chokidar.watch(paths, options);
+  }
 
-    on(event: string, listener: (...args: any[]) => void){
-        if (!WatchTrigger.events.includes(event)) {
-            throw new Error(`Event ${event} not supported`);
-        }
-        this.watcher.on(event, listener);
-        return this;
+  on(event: string, listener: (...args: any[]) => void){
+    if (!WatchTrigger.events.includes(event)) {
+      throw new Error(`Event ${event} not supported`);
     }
+    this.watcher.on(event, listener);
+    return this;
+  }
 
-    close() {
-        this.watcher.close();
-    }
+  close() {
+    this.watcher.close();
+  }
 }
 
 export default WatchTrigger;

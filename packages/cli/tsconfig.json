@@ -1,9 +1,10 @@
 {
     "extends" : "../../tsconfig.json",
+    
     "compilerOptions": {
         "outDir": "./lib",
-        "rootDir": "./src",
+        "rootDir": "./src"
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "src/triggers/key.ts"],
     "exclude": ["node_modules"]
 }

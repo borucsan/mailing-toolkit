@@ -2,6 +2,7 @@
   "name": "@mailing-toolkit/cli",
   "version": "0.0.1",
   "description": "CLI tools for creating e-mails templates",
+  "type": "module",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib"
@@ -15,7 +16,7 @@
   },
   "scripts": {
     "build-ts": "tsc",
-    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
+    "lint": "eslint --fix && tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "watch-ts": "tsc -w",
     "test:command": "mailing-toolkit",
     "build-install": "npm run build-ts && npm install -g ."
@@ -28,6 +29,7 @@
     "command-line-args": "^5.2.1",
     "command-line-commands": "^3.0.2",
     "command-line-usage": "^7.0.1",
+    "env-paths": "^3.0.0",
     "es-html-parser": "^0.0.9",
     "eslint": "^8",
     "glob": "^10.3.16",
@@ -45,6 +47,7 @@
     "@types/command-line-commands": "^2.0.5",
     "@types/command-line-usage": "^5.0.4",
     "@types/node": "^20.11.10",
+    "open": "^10.1.0",
     "typescript": "^5.3.3"
   },
   "author": "Dawid Karwot <dawidkarwot@gmail.com>",

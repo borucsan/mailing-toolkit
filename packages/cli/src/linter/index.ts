@@ -1,7 +1,7 @@
 import { ESLint, Linter } from "eslint";
 
 import mailing from "@mailing-toolkit/eslint-plugin";
-import { Payload, Processor } from "../pipeline";
+import { Payload, Processor } from "../pipeline/index.js";
 
 export class ESLintLintProcessor implements Processor {
   private eslint;
@@ -9,7 +9,7 @@ export class ESLintLintProcessor implements Processor {
   constructor(options = {} as ESLint.Options) {
     const config = {
       overrideConfigFile: true as any,
-      baseConfig: [...mailing.configs.recommended] as Linter.Config,
+      baseConfig: [...mailing.default.configs.recommended] as Linter.Config,
       ...options,
     } as ESLint.Options;
     this.eslint = new ESLint(config);
@@ -19,7 +19,7 @@ export class ESLintLintProcessor implements Processor {
     const files = payload.get("files") as string[];
     const fix = payload.get("fix") as boolean;
     console.debug("Lint", files, fix);
-    let results = await this.eslint.lintFiles(files);
+    const results = await this.eslint.lintFiles(files);
     if (fix) {
       await ESLint.outputFixes(results);
       payload.set("esLintResults", results);
