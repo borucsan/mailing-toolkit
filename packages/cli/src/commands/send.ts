@@ -1,9 +1,8 @@
 import { CommandLineOptions, OptionDefinition } from "command-line-args";
 import { OptionDefinition as DescriptionOptionDefinition} from "command-line-usage";
-import nodemailer, { Transporter } from 'nodemailer';
 import { Command, CommandResult } from "./command.js";
 import Pipeline, { InputFilesProcessor, Payload } from "../pipeline/index.js";
-import { MailerTransporterProcessor, PrepareMailerProcessor } from "../mailer/index.js";
+import { MailerTransporterProcessor, PrepareMailerProcessor, PrepareTransportProcessor } from "../mailer/index.js";
 import ProjectConfig, { CommandConfig } from "../config/index.js";
 
 export interface SendConfigValues {
@@ -99,33 +98,13 @@ export default class Send implements Command {
     const { defaultEngine, to, from} = config.get<SendConfig>('send');
     options.engine = options.engine ?? defaultEngine;
     options.to = options.to && options.to.length > 0 ? options.to : to;
-    let transport: Transporter | undefined = undefined;
-    switch(options.engine) {
-      case "maildev":
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        transport = nodemailer.createTransport({
-          port: config.get<number|undefined>('maildev.port') ?? 1025,
-        });
-        break;
-      case "gmail":
-        transport = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: config.get<string>('send.gmail.user'),
-            pass: config.get<string>('send.gmail.pass'),
-          }
-        });
-    }
-    if(!transport) {
-      throw new Error(`Transporter not found for engine ${options.engine}`);
-    }
-
     const pipeline = Pipeline.create()
+      .add(new PrepareTransportProcessor())
       .add(new InputFilesProcessor())
       .add(new PrepareMailerProcessor())
-      .add(new MailerTransporterProcessor(transport));
+      .add(new MailerTransporterProcessor());
 
-    const payload = Payload.fromCli({from, ...options});
+    const payload = Payload.fromCli({from, ...options}, config);
 
     await pipeline.process(payload);
   }

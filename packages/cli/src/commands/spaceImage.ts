@@ -1,12 +1,8 @@
 import { CommandLineOptions, OptionDefinition } from "command-line-args";
+import { OptionDefinition as DescriptionOptionDefinition} from "command-line-usage";
 import { Command, CommandResult } from "./command.js";
-import { createEmptyImage } from "../image/index.js";
-import fs from "fs";
-import path from "path";
-import { parse } from "es-html-parser";
-import { findTagNodeInAST } from "../utils/ast.js";
-import { globSync } from "glob";
-import { getItemsIn1NotIn2 } from "../utils/arrays.js";
+import { CollectFilesProcessor, CreateEmptyImageProcessor } from "../image/index.js";
+import Pipeline, { InputFilesProcessor, Payload } from "../pipeline/index.js";
 
 export default class SpaceImage implements Command {
   name = 'space-img';
@@ -14,7 +10,7 @@ export default class SpaceImage implements Command {
 
   description = 'Generate space image';
 
-  args: OptionDefinition[] = [
+  args: (OptionDefinition & DescriptionOptionDefinition)[] = [
     {
       name: "width",
       type: Number,
@@ -35,42 +31,32 @@ export default class SpaceImage implements Command {
       name: "output",
       alias: "o"
     },
+    {
+      name: "update",
+      type: Boolean,
+      alias: "u",
+      defaultValue: false
+    },
+    {
+      name: 'input',
+      description: 'The input files to process',
+      type: String,
+      alias: 'i',
+      multiple: true,
+      defaultValue: ["**/*.{html,htm}"],
+    },
   ];
 
-  async run({ width, height, color, output, input }: CommandLineOptions): Promise<void | CommandResult> {
-    const o = output ?? `./images/s{{width}}x{{height}}`;
-    const root = process.cwd();
-    console.debug(width, height, color, output, input);
-    if(width && height) {
-      createEmptyImage(width, height, color, o);
+  async run(options: CommandLineOptions): Promise<void | CommandResult> {
+    const pipeline = Pipeline.create();
+    if(options.width && options.height) {
+      pipeline.add(new CreateEmptyImageProcessor());
+      pipeline.process(Payload.fromCli(options));
       return;
-    } else if(input) {
-      const pattern = /^images\/s\d+x\d+.png/;
-      const filePath = path.resolve(input);
-      const content = fs.readFileSync(filePath, 'utf-8');
-      const {ast} = parse(content);
-      const tags = findTagNodeInAST(ast, 'img');
-      const imagesFromHtml = tags.map((tag) => {
-        return tag.attributes.find((attr) => attr.key.value === 'src')?.value?.value;
-      }).filter(src => src && pattern.test(src)) as string[];
-
-      const imagesInFolder = globSync('images/s*.png');
-      const obsoleteImages = getItemsIn1NotIn2(imagesInFolder, imagesFromHtml);
-      const newImages = getItemsIn1NotIn2(imagesFromHtml, imagesInFolder);
-      console.log('Status:', newImages, obsoleteImages, imagesInFolder, imagesFromHtml);
-
-      obsoleteImages.forEach((img) => {
-        fs.unlinkSync(path.resolve(root, img));
-      });
-      console.log('Obsolete images removed');
-
-      newImages.forEach((img) => {
-        const [width, height] = img.match(/\d+/g) as string[];
-        createEmptyImage(parseInt(width), parseInt(height), color, path.resolve(root, img));
-      });
-
-      console.log('New images created'); 
+    } else if(options.input) {
+      pipeline.add(new InputFilesProcessor());
+      pipeline.add(new CollectFilesProcessor(options.update));
+      pipeline.process(Payload.fromCli(options));
     }
-        
   }
 }

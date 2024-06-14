@@ -1,27 +1,57 @@
-import nodemailer from 'nodemailer';
-
+import nodemailer, { Transporter } from 'nodemailer';
 import { Payload, Processor } from '../pipeline/index.js';
 import { promisify } from 'util';
 import fs from 'fs';
 import { parse } from 'es-html-parser';
 import { findTagNodeInAST } from '../utils/ast.js';
 import path from 'path';
+import ProjectConfig from '../config/index.js';
 
 const readFileAsync = promisify(fs.readFile);
 
 export class MailerTransporterProcessor implements Processor {
-  private transporter: nodemailer.Transporter;
-  constructor(transporter: nodemailer.Transporter) {
+  private transporter?: nodemailer.Transporter;
+  constructor(transporter?: nodemailer.Transporter) {
     this.transporter = transporter;
-  }
-  async sendMail(mailOptions: nodemailer.SendMailOptions): Promise<void> {
-    await this.transporter.sendMail(mailOptions);
   }
 
   async process(payload: Payload) {
     const mailOptions = payload.get('mailer.emails') as nodemailer.SendMailOptions[];
-    const senders = mailOptions.map((mailOption) => this.transporter.sendMail(mailOption));
+    const transporter = payload.get('mailer.transporter') as Transporter ?? this.transporter;
+    if(!transporter) {
+      throw new Error(`Transporter not found`);
+    }
+    const senders = mailOptions.map((mailOption) => transporter.sendMail(mailOption));
     return Promise.all(senders);
+  }
+}
+
+export class PrepareTransportProcessor implements Processor {
+
+    async process(payload: Payload) {
+    const engine = payload.get('engine') as string;
+    const config = payload.getConfig() as ProjectConfig;
+    let transporter: Transporter | undefined = undefined;
+    switch(engine) {
+      case "maildev":
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        transporter = nodemailer.createTransport({
+          port: config.get<number|undefined>('maildev.port') ?? 1025,
+        });
+        break;
+      case "gmail":
+        transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: config.get<string>('send.gmail.user'),
+            pass: config.get<string>('send.gmail.pass'),
+          }
+        });
+    }
+    if(!transporter) {
+      throw new Error(`Transporter not found for engine ${engine}`);
+    }
+    payload.set('mailer.transporter', transporter);
   }
 }
 

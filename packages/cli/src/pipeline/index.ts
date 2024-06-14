@@ -1,5 +1,6 @@
 import { CommandLineOptions } from "command-line-args";
 import { globSync } from "glob";
+import ProjectConfig from "../config/index.js";
 
 export interface Processor {
     process: (payload: Payload) => Promise<any>;
@@ -7,13 +8,18 @@ export interface Processor {
 
 export class Payload {
   private payload: Map<string, unknown> = new Map();
+  private config?: ProjectConfig;
+
+  constructor(config?: ProjectConfig) {
+    this.config = config;
+  }
 
   set(key: string, value: unknown) {
     this.payload.set(key, value);
   }
 
-  get(key: string) {
-    return this.payload.get(key);
+  get<T = unknown>(key: string) {
+    return this.payload.get(key) as T;
   }
 
   has(key: string) {
@@ -32,11 +38,15 @@ export class Payload {
     return this.payload;
   }
 
-  static create() {
-    return new Payload();
+  getConfig() {
+    return this.config;
   }
-  static fromCli(options: CommandLineOptions) {
-    const payload = Payload.create();
+
+  static create(config?: ProjectConfig) {
+    return new Payload(config);
+  }
+  static fromCli(options: CommandLineOptions, config?: ProjectConfig) {
+    const payload = Payload.create(config);
     for (const key in options) {
       payload.set(key, options[key]);
     }
