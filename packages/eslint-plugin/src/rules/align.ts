@@ -1,5 +1,5 @@
 import parse from "inline-style-parser";
-import { findAttr } from "../utils";
+import { findAttr } from "../utils/parser";
 import { RuleModule } from "../models";
 
 const MESSAGE_IDS = {
@@ -44,7 +44,7 @@ export default {
             node: node,
             messageId: MESSAGE_IDS.NO_ATTR_ALIGN,
             fix(fixer) {
-              return fixer.insertTextBefore(node.openStart, ` align="left"`);
+              return fixer.insertTextAfter(node.openStart, ` align="left"`);
             },
           });
         } else if (alignAttr?.value?.value === "justify") {

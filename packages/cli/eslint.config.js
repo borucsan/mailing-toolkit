@@ -8,6 +8,14 @@ import typescriptParser from '@typescript-eslint/parser';
         plugins: {
           import: fixupPluginRules(eslintImport)
         },
+        settings: {
+          'import/resolver': {
+            node: {
+                extensions: ['.js', '.jsx', '.ts', '.tsx'],
+                moduleDirectory: ['node_modules', 'src/'],
+            },
+          },
+        },
         languageOptions: {
           parser: typescriptParser
       },

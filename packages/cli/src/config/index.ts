@@ -56,7 +56,7 @@ class ProjectConfig {
     }
     const dir = path.dirname(configPath);
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync (configPath, { recursive: true });
+      fs.mkdirSync (dir, { recursive: true });
     }
 
     const fileConfig: Record<string, unknown> = {};
@@ -84,10 +84,12 @@ class ProjectConfig {
     try {
       await config.load();
     } catch (error) {
-      console.error('Error loading config:', error);
+      
       if (error instanceof ConfigNotFoundError) {
-        console.error('Creating new config file');
+        console.log('Creating new config file');
         await config.save();
+      } else {
+        throw error;
       }
     }
     return config;

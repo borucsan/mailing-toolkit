@@ -1,5 +1,5 @@
 
-import { findAttr } from "../utils";
+import { findAttr } from "../utils/parser";
 import parse from "inline-style-parser";
 import { RuleModule } from "../models";
 

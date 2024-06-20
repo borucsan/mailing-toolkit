@@ -1,5 +1,5 @@
 import { RuleModule } from "../models";
-import { findAttr } from "../utils";
+import { findAttr } from "../utils/parser";
 
 const MESSAGE_IDS = {
   NO_IMG_ALT: "noImgAlt",

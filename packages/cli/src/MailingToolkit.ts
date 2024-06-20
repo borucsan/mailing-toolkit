@@ -11,6 +11,7 @@ import { globalArguments, mergeArguments } from "./args/index.js";
 import ProjectConfig from "./config/index.js";
 import Config from "./commands/config.js";
 import Start from "./commands/start.js";
+import Text from "./commands/text.js";
 
 export class MailingToolkit {
 
@@ -69,6 +70,7 @@ export class MailingToolkit {
     mt.addCommand(new MailDev());
     mt.addCommand(new Config());
     mt.addCommand(new Start());
+    mt.addCommand(new Text());
 
     return mt;
   }
