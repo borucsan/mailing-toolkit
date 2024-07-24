@@ -14,7 +14,13 @@ export async function createEmptyImage(width: number, height: number, color: str
     new Jimp(width, height, color, async (er, i) => {
       console.debug(er);
       i.opacity(0);
-      const o = `${output}.${i.getExtension()}`
+      const fo = path.parse(output);
+      let ext = fo.ext;
+      console.debug(ext);
+      if(ext === '') {
+        ext = `.${i.getExtension()}`;
+      }
+      const o = `${fo.dir}/${fo.name}${ext}`
         .replace("{{width}}", width.toString())
         .replace("{{height}}", height.toString());
       await i.writeAsync(o);

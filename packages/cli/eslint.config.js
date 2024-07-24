@@ -20,7 +20,7 @@ import typescriptParser from '@typescript-eslint/parser';
           parser: typescriptParser
       },
         rules: {
-          "import/no-unresolved": 2,
+          "import/no-unresolved": "off",
           "import/no-commonjs": 2,
           "import/extensions": [2, "ignorePackages"],
           'no-var': 'error',

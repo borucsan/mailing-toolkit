@@ -155,7 +155,7 @@ export class MailingTxtVersionProcessor implements Processor {
           if (textContent !== textVersion && showDiff) {
             const diff = diffChars(textContent, textVersion);
             diff.forEach((part) => {
-              let text = part.added
+              const text = part.added
                 ? part.value.bgGreen
                 : part.removed
                   ? part.value.bgRed

@@ -46,11 +46,11 @@ export default class Start implements Command {
     server.fileWatcher
       .on('ready', async () => {
         await Validate.eslintPipeline.process(Payload.fromCli(options));
-        await this.spaceImages(options)
+        await this.spaceImages(options);
       })
       .on('change', async () => {
         await Validate.eslintPipeline.process(Payload.fromCli(options));
-        await this.spaceImages(options)
+        await this.spaceImages(options);
         keyTrigger.createMenu();
       });
     keyTrigger.addBinding({
@@ -69,7 +69,7 @@ export default class Start implements Command {
         const payload = Payload.fromCli(options);
         payload.set('fix', true);
         await Validate.eslintFixPipeline.process(payload);
-        await this.spaceImages(options)
+        await this.spaceImages(options);
       }
     });
     keyTrigger.addBinding({
@@ -105,9 +105,9 @@ export default class Start implements Command {
       .add(new PrepareMailerProcessor())
       .add(new MailerTransporterProcessor());
 
-      const { defaultEngine, to, from} = config.get<SendConfig>('send');
+    const { defaultEngine, to, from} = config.get<SendConfig>('send');
 
-      const engine = options.engine ?? defaultEngine;
+    const engine = options.engine ?? defaultEngine;
     const toEmails = options.to && options.to.length > 0 ? options.to : to;
 
     const payload = Payload.fromCli({from, engine, to: toEmails, ...options}, config);
