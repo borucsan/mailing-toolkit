@@ -12,6 +12,7 @@ import ProjectConfig from "./config/index.js";
 import Config from "./commands/config.js";
 import Start from "./commands/start.js";
 import Text from "./commands/text.js";
+import Archive from "./commands/archive.js";
 
 export class MailingToolkit {
 
@@ -32,14 +33,29 @@ export class MailingToolkit {
   }
 
   async run() {
-    const config = await ProjectConfig.init(Array.from(this.commands.values()));
-    const helpCommand = this.commands.get('help')!;
     const commandNames = Array.from(this.commands.keys());
-
+    const helpCommand = this.commands.get('help')!;
+    let parsedArgs: { command: string | null; argv: string[] } = { command: null, argv: [] };
+    let command: Command;
+    let name: string = 'help';
     try {
-      const { command: name, argv } = commandLineCommands(commandNames, this.args);
+      parsedArgs = commandLineCommands(commandNames, this.args);
+      name = parsedArgs.command ?? 'help';
+    } catch (error: any) {
+      console.error('Error:', error.name, error.message);
+      if (error.name === 'INVALID_COMMAND') {
+        if (error.command) {
+          console.warn(`'${error.command}' is not an available command.`);
+        }
+      } else {
+        throw error;
+      }
+    }
+    try {
+      const { argv } = parsedArgs;
+      const config = await ProjectConfig.init(Array.from(this.commands.values()));
 
-      const command = this.commands.get(name ?? "");
+      command = this.commands.get(name) ?? helpCommand;
 
       if (!command) {
         throw new TypeError('command is null');
@@ -71,6 +87,7 @@ export class MailingToolkit {
     mt.addCommand(new Config());
     mt.addCommand(new Start());
     mt.addCommand(new Text());
+    mt.addCommand(new Archive());
 
     return mt;
   }

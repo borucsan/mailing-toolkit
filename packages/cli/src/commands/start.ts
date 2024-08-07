@@ -6,10 +6,10 @@ import { startDevServer } from "@web/dev-server";
 import { globSync } from "glob";
 import Validate from "./validate.js";
 import Pipeline, { InputFilesProcessor, Payload } from "../pipeline/index.js";
-import { CollectFilesProcessor } from "../image/index.js";
-import { PrepareMailerProcessor, MailerTransporterProcessor, PrepareTransportProcessor } from "../mailer/index.js";
+import { CollectImageFilesProcessor, SpaceImageProcessor } from "../files/image.js";
 import { SendConfig } from "./send.js";
 import ProjectConfig from "../config/index.js";
+import { SenderEnginePipelineFactory } from "../mailer/engine.js";
 
 
 export default class Start implements Command {
@@ -94,20 +94,16 @@ export default class Start implements Command {
   private async spaceImages(options: CommandLineOptions, fix = false) {
     const pipeline = Pipeline.create();
     pipeline.add(new InputFilesProcessor());
-    pipeline.add(new CollectFilesProcessor(fix));
+    pipeline.add(new CollectImageFilesProcessor());
+    pipeline.add(new SpaceImageProcessor(fix));
     await pipeline.process(Payload.fromCli(options));
   }
 
   private async sendEmail(options: CommandLineOptions, config: ProjectConfig) {
-    const pipeline = Pipeline.create()
-      .add(new PrepareTransportProcessor())
-      .add(new InputFilesProcessor())
-      .add(new PrepareMailerProcessor())
-      .add(new MailerTransporterProcessor());
-
     const { defaultEngine, to, from} = config.get<SendConfig>('send');
-
     const engine = options.engine ?? defaultEngine;
+    const pipeline = SenderEnginePipelineFactory.get(options.engine, config);
+
     const toEmails = options.to && options.to.length > 0 ? options.to : to;
 
     const payload = Payload.fromCli({from, engine, to: toEmails, ...options}, config);

@@ -1,7 +1,7 @@
 import { CommandLineOptions, OptionDefinition } from "command-line-args";
 import { OptionDefinition as DescriptionOptionDefinition} from "command-line-usage";
 import { Command, CommandResult } from "./command.js";
-import { CollectFilesProcessor, CreateEmptyImageProcessor } from "../image/index.js";
+import { CollectImageFilesProcessor, CreateEmptyImageProcessor, SpaceImageProcessor } from "../files/image.js";
 import Pipeline, { InputFilesProcessor, Payload } from "../pipeline/index.js";
 
 export default class SpaceImage implements Command {
@@ -55,7 +55,8 @@ export default class SpaceImage implements Command {
       return;
     } else if(options.input) {
       pipeline.add(new InputFilesProcessor());
-      pipeline.add(new CollectFilesProcessor(options.update));
+      pipeline.add(new CollectImageFilesProcessor());
+      pipeline.add(new SpaceImageProcessor(options.update));
       pipeline.process(Payload.fromCli(options));
     }
   }

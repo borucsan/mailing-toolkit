@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mailing-toolkit/cli": "^0.0.1"
   },
   "devDependencies": {
     "eslint": "^8.57.0"
