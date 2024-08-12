@@ -8,10 +8,9 @@
   "author": "Dawid Karwot <dawidkarwot@gmail.com>",
   "workspaces": [
     "packages/cli",
-    "packages/eslint-plugin",
-    "packages/mailing-test"
+    "packages/eslint-plugin"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@eslint/compat": "^1.0.3",
     "@types/eslint": "^8.56.6",

@@ -62,5 +62,5 @@
     "typescript": "^5.3.3"
   },
   "author": "Dawid Karwot <dawidkarwot@gmail.com>",
-  "license": "ISC"
+  "license": "MIT"
 }
