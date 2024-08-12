@@ -1,6 +1,6 @@
 {
   "name": "@mailing-toolkit/cli",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "description": "CLI tools for creating e-mails templates",
   "type": "module",
   "main": "lib/index.js",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@html-eslint/parser": "^0.24.1",
     "@inquirer/prompts": "^5.3.6",
-    "@mailing-toolkit/eslint-plugin": "^0.3.0",
+    "@mailing-toolkit/eslint-plugin": "^0.8.0",
     "@types/archiver": "^6.0.2",
     "@types/prompt": "^1.1.8",
     "@web/dev-server": "^0.4.5",
