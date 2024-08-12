@@ -67,6 +67,10 @@ export class SareApiSendMailProcessor implements Processor {
         from: typeof from === "string" ? from : from?.address,
         subject,
         newsletter: parseInt(id),
+        encoding:"UTF-8",
+        attached_images: true,
+        format:"html",
+			  format_txt:"txt",
       };
 
       if (Array.isArray(to)) {
