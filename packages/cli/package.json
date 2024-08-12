@@ -10,6 +10,9 @@
   "bin": {
     "mailing-toolkit": "./bin/mailing-toolkit.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "preferGlobal": true,
   "engines": {
     "node": ">=8.0"

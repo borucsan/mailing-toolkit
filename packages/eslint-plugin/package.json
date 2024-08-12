@@ -7,6 +7,9 @@
     "eslintplugin",
     "eslint-plugin"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Dawid Karwot",
   "main": "./lib/index.js",
   "exports": "./lib/index.js",
