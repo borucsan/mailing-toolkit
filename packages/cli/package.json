@@ -1,6 +1,6 @@
 {
   "name": "@mailing-toolkit/cli",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "CLI tools for creating e-mails templates",
   "type": "module",
   "main": "lib/index.js",
@@ -47,6 +47,7 @@
     "html-to-text": "^9.0.5",
     "jimp": "^0.22.10",
     "keypress": "^0.2.1",
+    "lodash-es": "^4.17.21",
     "maildev": "^2.1.0",
     "nanoid": "^5.0.7",
     "node-html-parser": "^6.1.12",
