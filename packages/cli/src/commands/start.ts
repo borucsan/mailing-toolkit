@@ -102,11 +102,10 @@ export default class Start implements Command {
   private async sendEmail(options: CommandLineOptions, config: ProjectConfig) {
     const { defaultEngine, to, from} = config.get<SendConfig>('send');
     const engine = options.engine ?? defaultEngine;
-    const pipeline = SenderEnginePipelineFactory.get(options.engine, config);
-
     const toEmails = options.to && options.to.length > 0 ? options.to : to;
-
     const payload = Payload.fromCli({from, engine, to: toEmails, ...options}, config);
+    const pipeline = SenderEnginePipelineFactory.get(options.engine, payload);
+
 
     await pipeline.process(payload);
   }

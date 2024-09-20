@@ -102,6 +102,13 @@ export default class Send implements Command {
       description: 'The e-mail subject',
       type: String,
       defaultValue: "Test email",
+    },
+    {
+      name: 'newsletter',
+      alias: 'n',
+      multiple: true,
+      description: 'The newsletter id to send (SARE engine only)',
+      type: String,
     }
   ];
 
@@ -111,9 +118,8 @@ export default class Send implements Command {
     const { defaultEngine, to, from} = config.get<SendConfig>('send');
     options.engine = options.engine ?? defaultEngine;
     options.to = options.to && options.to.length > 0 ? options.to : to;
-    const pipeline = SenderEnginePipelineFactory.get(options.engine, config);
     const payload = Payload.fromCli({from, ...options}, config);
-    
+    const pipeline = SenderEnginePipelineFactory.get(options.engine, payload);
     await pipeline.process(payload);
   }
 }

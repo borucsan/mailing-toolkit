@@ -11,7 +11,8 @@ export interface SenderEngine {
 }
 
 export class SenderEnginePipelineFactory {
-  static get(engine: SendEngine, config: ProjectConfig): Pipeline {
+  static get(engine: SendEngine, payload: Payload): Pipeline {
+    const config = payload.getConfig() as ProjectConfig;
     switch (engine) {
       case SendEngine.Maildev:
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -33,12 +34,16 @@ export class SenderEnginePipelineFactory {
             },
           })));
       case SendEngine.SARE:
-        return Pipeline.create()
-          .add(new InputFilesProcessor())
-          .add(new ArchiveMailProcessor())
-          .add(new SareApiUploadNewsletterProcessor())
-          .add(new SareApiMoveNewsletterToReadyProcessor())
-          .add(new SareApiSendMailProcessor());
+        const newsletter = payload.get<number[]>("newsletter");
+        const pipeline = Pipeline.create();
+        if((newsletter?.length ?? 0) === 0) {
+          pipeline.add(new InputFilesProcessor()) 
+            .add(new ArchiveMailProcessor())
+            .add(new SareApiUploadNewsletterProcessor())
+            .add(new SareApiMoveNewsletterToReadyProcessor());
+        }
+        pipeline.add(new SareApiSendMailProcessor());
+        return pipeline;
       default:
         throw new Error(`Engine ${engine} not found`);
     }

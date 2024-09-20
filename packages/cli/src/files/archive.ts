@@ -62,16 +62,18 @@ export class ArchiveMailProcessor implements Processor {
       throw err;
     });
     archive.pipe(output);
+    if (fs.existsSync(dirName + '/images')) {
+      archive.directory(dirName + '/images', 'images');
+    }
 
-    archive.append(fs.createReadStream(file), { name: 'index.html' });
     const txtPath = file.replace(/\.[^.]+$/, ".txt");
     if (fs.existsSync(txtPath)) {
       archive.append(fs.createReadStream(txtPath), { name: 'index.txt' });
     }
-    if (fs.existsSync(dirName + '/images')) {
-      archive.directory(dirName + '/images', 'images');
-    }
+
+    archive.append(fs.createReadStream(file), { name: 'index.html' });
     await archive.finalize();
+    await new Promise((resolve) => { setTimeout(resolve, 2000); });
     console.debug(`Created archive ${zipFile} for`, file);
     return zipFile;
   }

@@ -60,17 +60,16 @@ export class SareApiSendMailProcessor implements Processor {
     const subject = payload.get<string>("subject");
     const uid = config.get<string>("send.sare.uid");
     const apiKey = config.get<string>("send.sare.apiKey");
-    const newslettersIds = payload.get<string[]>("newsletters");
+    const newsletter = payload.get<(number | string)[]>("newsletter");
+    const newslettersIds = newsletter ? newsletter : payload.get<string[]>("newsletters");
     const url = `${SARE_API_BASE_URL}${uid}${this.uri}`;
     const newsletters: SareSendMailTransactionalRequest = newslettersIds.map((id) => {
       const newsletter: Partial<EmailData> = {
         from: typeof from === "string" ? from : from?.address,
         subject,
-        newsletter: parseInt(id),
+        newsletter: parseInt(id.toString()),
         encoding:"UTF-8",
         attached_images: true,
-        format:"html",
-			  format_txt:"txt",
       };
 
       if (Array.isArray(to)) {
