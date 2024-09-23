@@ -15,8 +15,16 @@ The command-line tool for developers to work on creating HTML emails templates.
 
 
 ## Installation
-<!-- 
+
 ```bash
-$ yarn global add mailing-toolkit-cli
+$ yarn global add @mailing-toolkit/cli
+```
 # or...
-$ npm install -g mailing-toolkit-cli -->
+```bash
+$ npm install -g @mailing-toolkit/cli
+```
+
+then to generate the configuration file run:
+```bash
+$ mailing-toolkit config
+```

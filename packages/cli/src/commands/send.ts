@@ -120,6 +120,14 @@ export default class Send implements Command {
     options.to = options.to && options.to.length > 0 ? options.to : to;
     const payload = Payload.fromCli({from, ...options}, config);
     const pipeline = SenderEnginePipelineFactory.get(options.engine, payload);
-    await pipeline.process(payload);
+    try {
+      await pipeline.process(payload);
+    } catch (error) {
+      const e = error as any;
+      if(e.code === "ESOCKET" && options.engine === "maildev") {
+        console.error('Maildev server not running. Please run "maildev" command');
+      }
+    }
+    
   }
 }
