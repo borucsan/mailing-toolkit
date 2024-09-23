@@ -1,6 +1,6 @@
 {
   "name": "@mailing-toolkit/cli",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "CLI tools for creating e-mails templates",
   "type": "module",
   "main": "lib/index.js",
