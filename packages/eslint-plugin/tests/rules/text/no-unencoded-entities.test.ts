@@ -1,5 +1,5 @@
-import createRuleTester from "../rule-tester";
-import  rule from "../../src/rules/htmlEntities";
+import createRuleTester from "../../rule-tester";
+import rule from "../../../src/rules/text/no-unencoded-entities";
 
 const ruleTester = createRuleTester();
 

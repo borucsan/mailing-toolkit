@@ -105,7 +105,6 @@ export const encode = (
     }
     // Note: any remaining non-ASCII symbols are handled outside of the `if`.
   } else if (useNamedReferences) {
-    console.debug(useNamedReferences);
     // Apply named character references.
     // Encode `<>"'&` using named character references.
     if (!allowUnsafeSymbols) {

@@ -13,6 +13,8 @@ export interface SenderEngine {
 export class SenderEnginePipelineFactory {
   static get(engine: SendEngine, payload: Payload): Pipeline {
     const config = payload.getConfig() as ProjectConfig;
+
+    console.debug(`Prepare engine: ${engine}`);
     switch (engine) {
       case SendEngine.Maildev:
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";

@@ -5,5 +5,5 @@ export default {
     "@mailing-eslint/align": "error",
     "@mailing-eslint/unrecommended-tags": "error",
     "@mailing-eslint/recommended-attrs": "error",
-    "@mailing-eslint/html-entities": "warn",
+    "@mailing-eslint/text-on-unencoded-entities": "warn",
 }

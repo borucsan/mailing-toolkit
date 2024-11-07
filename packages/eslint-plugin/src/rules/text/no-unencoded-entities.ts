@@ -1,13 +1,11 @@
 
-import { RuleModule } from "../models";
-import { encode, regexBmpWhitelist } from "../utils/encoder";
+import { RuleModule } from "../../models";
+import { encode, regexBmpWhitelist } from "../../utils/encoder";
 const MESSAGE_IDS = {
   NO_ENCODED_HTML_ENTITY: "noEncodedHtmlEntity",
 };
+const matchRegex = new RegExp(regexBmpWhitelist);
 
-
-
-  const matchRegex = new RegExp(regexBmpWhitelist);
 export default {
   meta: {
     type: "problem",
@@ -33,7 +31,6 @@ export default {
                     }
                 });
             }
-            
       },
     };
   },

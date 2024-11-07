@@ -22,7 +22,7 @@
     "lint": "eslint --fix && tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "watch-ts": "tsc -w",
     "test:command": "mailing-toolkit",
-    "build-install": "npm run build-ts && sudo npm install -g ."
+    "build-install": "npm run build-ts && npm install -g ."
   },
   "dependencies": {
     "@html-eslint/parser": "^0.24.1",
